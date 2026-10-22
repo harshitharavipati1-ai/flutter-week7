@@ -1,0 +1,100 @@
+
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(MaterialApp(home: RegistrationForm()));
+}
+
+class RegistrationForm extends StatefulWidget {
+  @override
+  State<RegistrationForm> createState() =>
+      _RegistrationFormState();
+}
+
+class _RegistrationFormState extends State<RegistrationForm> {
+  final _formKey = GlobalKey<FormState>();
+  final name = TextEditingController();
+  final email = TextEditingController();
+  final password = TextEditingController();
+
+  String gender = 'Male';
+  bool accepted = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Registration Form')),
+      body: Padding(
+        padding: EdgeInsets.all(16),
+        child: Form(
+          key: _formKey,
+          child: ListView(
+            children: [
+              TextFormField(
+                controller: name,
+                decoration: InputDecoration(
+                  labelText: 'Name',
+                ),
+                validator: (v) =>
+                    v!.isEmpty ? 'Enter name' : null,
+              ),
+              TextFormField(
+                controller: email,
+                decoration: InputDecoration(
+                  labelText: 'Email',
+                ),
+                validator: (v) =>
+                    v!.contains('@') ? null : 'Enter valid email',
+              ),
+              TextFormField(
+                controller: password,
+                obscureText: true,
+                decoration: InputDecoration(
+                  labelText: 'Password',
+                ),
+                validator: (v) =>
+                    v!.length < 6 ? 'Minimum 6 characters' : null,
+              ),
+              DropdownButtonFormField<String>(
+                value: gender,
+                decoration: InputDecoration(labelText: 'Gender'),
+                items: ['Male', 'Female', 'Other']
+                    .map((g) => DropdownMenuItem(
+                          value: g,
+                          child: Text(g),
+                        ))
+                    .toList(),
+                onChanged: (v) => setState(() => gender = v!),
+              ),
+              CheckboxListTile(
+                title: Text('Accept Terms and Conditions'),
+                value: accepted,
+                onChanged: (v) =>
+                    setState(() => accepted = v!),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  if (_formKey.currentState!.validate() &&
+                      accepted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Registration Successful'),
+                      ),
+                    );
+                  } else if (!accepted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Accept terms and conditions'),
+                      ),
+                    );
+                  }
+                },
+                child: Text('Register'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
